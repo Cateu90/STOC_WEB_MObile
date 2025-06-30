@@ -1,0 +1,6 @@
+SELECT CONSTRAINT_NAME
+FROM information_schema.KEY_COLUMN_USAGE
+WHERE TABLE_NAME = 'comandas' AND COLUMN_NAME = 'mesa_id' AND CONSTRAINT_SCHEMA = DATABASE() AND REFERENCED_TABLE_NAME IS NOT NULL;
+
+-- Permitir NULL em mesa_id na tabela comandas
+ALTER TABLE comandas MODIFY mesa_id INT NULL;

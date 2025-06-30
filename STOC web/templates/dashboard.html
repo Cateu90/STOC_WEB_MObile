@@ -1,0 +1,208 @@
+{% extends "base.html" %}
+{% block title %}Dashboard - STOC{% endblock %}
+{% block content %}
+<div class="dashboard-bg">
+  <div class="dashboard-main-card">
+    <div class="dashboard-welcome">
+      <div class="dashboard-welcome-left">
+        <div class="dashboard-welcome-title">👋 Bem-vindo ao <span class="dashboard-brand">STOC!</span></div>
+        <div class="dashboard-welcome-user">Olá, <b>{{ user.name if user else '' }}</b>! Pronto para gerenciar seu restaurante?</div>
+        <div style="margin-top:18px; background:#fff3cd; color:#856404; border:1px solid #ffeeba; border-radius:8px; padding:10px 16px; font-size:1.1em;">
+          <b>IP do Backend:</b> <span style="font-family:monospace;">{{ backend_ip }}</span><br>
+          <b>Porta:</b> <span style="font-family:monospace;">{{ backend_port }}</span><br>
+          <span style="font-size:0.95em;">Configure este IP e porta no app mobile para garantir a comunicação!</span>
+        </div>
+      </div>
+      <div class="dashboard-welcome-right">
+        <div class="dashboard-clock" id="dashboard-clock"></div>
+        <div class="dashboard-date">{{ now.strftime('%A, %d de %B de %Y') if now else '' }}</div>
+      </div>
+    </div>
+    <div class="dashboard-cards">
+      <div class="dashboard-card">
+        <div class="dashboard-card-title">Comandas Abertas</div>
+        <div class="dashboard-card-value">{{ dashboard.comandas_abertas or 0 }}</div>
+        <div class="dashboard-card-status dashboard-card-status-ativo">Ativo</div>
+      </div>
+      <div class="dashboard-card">
+        <div class="dashboard-card-title">Vendas Hoje</div>
+        <div class="dashboard-card-value">R$ {{ '%.2f'|format(dashboard.vendas_hoje or 0) }}</div>
+        <div class="dashboard-card-status dashboard-card-status-crescente">Crescente</div>
+      </div>
+      <div class="dashboard-card">
+        <div class="dashboard-card-title">Produtos</div>
+        <div class="dashboard-card-value">{{ dashboard.produtos or 0 }}</div>
+        <div class="dashboard-card-status dashboard-card-status-disponivel">Disponível</div>
+      </div>
+      <div class="dashboard-card">
+        <div class="dashboard-card-title">Impressoras</div>
+        <div class="dashboard-card-value">{{ dashboard.impressoras or 0 }}</div>
+        <div class="dashboard-card-status dashboard-card-status-online">Online</div>
+      </div>
+    </div>
+    <div class="dashboard-areas">
+      <div class="dashboard-areas-title">Áreas do Sistema</div>
+      <div class="dashboard-areas-grid">
+        <a href="/comandas" class="dashboard-area dashboard-area-comandas">
+          <span class="dashboard-area-icon">📋</span>
+          <span class="dashboard-area-title">Comandas</span>
+          <span class="dashboard-area-desc">Gerencie pedidos e mesas</span>
+          <span class="dashboard-area-arrow">→</span>
+        </a>
+        <a href="/pdv" class="dashboard-area dashboard-area-pdv">
+          <span class="dashboard-area-icon">💳</span>
+          <span class="dashboard-area-title">PDV / Caixa</span>
+          <span class="dashboard-area-desc">Vendas diretas e pagamentos</span>
+          <span class="dashboard-area-arrow">→</span>
+        </a>
+        <a href="/produtos" class="dashboard-area dashboard-area-produtos">
+          <span class="dashboard-area-icon">🍽️</span>
+          <span class="dashboard-area-title">Produtos</span>
+          <span class="dashboard-area-desc">Cardápio e preços</span>
+          <span class="dashboard-area-arrow">→</span>
+        </a>
+        <a href="/relatorios" class="dashboard-area dashboard-area-relatorios">
+          <span class="dashboard-area-icon">📊</span>
+          <span class="dashboard-area-title">Relatórios</span>
+          <span class="dashboard-area-desc">Vendas e estatísticas</span>
+          <span class="dashboard-area-arrow">→</span>
+        </a>
+        <a href="/impressoras" class="dashboard-area dashboard-area-impressoras">
+          <span class="dashboard-area-icon">🖨️</span>
+          <span class="dashboard-area-title">Impressoras</span>
+          <span class="dashboard-area-desc">Configurar impressão</span>
+          <span class="dashboard-area-arrow">→</span>
+        </a>
+        <a href="/usuarios" class="dashboard-area dashboard-area-usuarios">
+          <span class="dashboard-area-icon">👥</span>
+          <span class="dashboard-area-title">Usuários</span>
+          <span class="dashboard-area-desc">Equipe e permissões</span>
+          <span class="dashboard-area-arrow">→</span>
+        </a>
+      </div>
+    </div>
+    </div>
+  </div>
+</div>
+<script>
+function updateClock() {
+  const el = document.getElementById('dashboard-clock');
+  if (!el) return;
+  const now = new Date();
+  el.textContent = now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+}
+setInterval(updateClock, 1000);
+updateClock();
+</script>
+<style>
+.dashboard-bg {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 0;
+}
+.dashboard-main-card {
+  max-width: 1100px;
+  margin: 32px auto 0 auto;
+  background: none;
+  border-radius: 24px;
+  box-shadow: none;
+  padding: 0;
+}
+.dashboard-welcome {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  background: linear-gradient(90deg, #ff6b35 60%, #ffb347 100%);
+  color: #fff;
+  border-radius: 18px;
+  padding: 32px 36px 24px 36px;
+  margin-bottom: 32px;
+  box-shadow: 0 4px 24px #0001;
+}
+.dashboard-welcome-title {
+  font-size: 2em;
+  font-weight: 700;
+  margin-bottom: 8px;
+  letter-spacing: 1px;
+}
+.dashboard-brand { color: #fff; text-shadow: 0 2px 8px #ffb34788; }
+.dashboard-welcome-user { font-size: 1.1em; }
+.dashboard-welcome-right { text-align: right; }
+.dashboard-clock { font-size: 2em; font-weight: 700; letter-spacing: 2px; }
+.dashboard-date { font-size: 1em; margin-top: 4px; color: #fff; opacity: 0.9; }
+.dashboard-cards {
+  display: flex;
+  gap: 24px;
+  margin-bottom: 32px;
+  justify-content: center;
+}
+.dashboard-card {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 2px 16px #0001;
+  padding: 28px 36px 18px 36px;
+  min-width: 180px;
+  text-align: center;
+  flex: 1;
+  max-width: 220px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.dashboard-card-title { color: #888; font-size: 1.1em; margin-bottom: 8px; }
+.dashboard-card-value { font-size: 2em; font-weight: 700; color: #ff6b35; margin-bottom: 6px; }
+.dashboard-card-status { font-size: 0.95em; font-weight: 600; border-radius: 8px; padding: 2px 12px; margin-top: 2px; }
+.dashboard-card-status-ativo { background: #eafaf1; color: #28a745; }
+.dashboard-card-status-crescente { background: #eaf1fa; color: #667eea; }
+.dashboard-card-status-disponivel { background: #eafaf1; color: #28a745; }
+.dashboard-card-status-online { background: #eafaf1; color: #28a745; }
+.dashboard-areas {
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 2px 16px #0001;
+  padding: 32px 36px 24px 36px;
+  margin-bottom: 32px;
+}
+.dashboard-areas-title { font-size: 1.3em; font-weight: 700; margin-bottom: 18px; color: #222; }
+.dashboard-areas-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 18px;
+}
+.dashboard-area {
+  display: flex;
+  flex-direction: column;
+  background: #fafbfc;
+  border-radius: 12px;
+  box-shadow: 0 1px 8px #0001;
+  padding: 18px 18px 14px 18px;
+  text-decoration: none;
+  color: #222;
+  border: 2px solid #fff;
+  transition: border 0.2s, box-shadow 0.2s;
+  position: relative;
+}
+.dashboard-area:hover { border: 2px solid #ff6b35; box-shadow: 0 2px 16px #ff6b3533; }
+.dashboard-area-icon { font-size: 2em; margin-bottom: 8px; }
+.dashboard-area-title { font-size: 1.1em; font-weight: 700; margin-bottom: 2px; }
+.dashboard-area-desc { font-size: 0.98em; color: #888; margin-bottom: 2px; }
+.dashboard-area-arrow { position: absolute; right: 18px; bottom: 12px; font-size: 1.2em; color: #ff6b35; }
+.dashboard-configs {
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 2px 16px #0001;
+  padding: 24px 36px 18px 36px;
+  margin-bottom: 32px;
+}
+.dashboard-configs-title { font-size: 1.1em; font-weight: 700; margin-bottom: 12px; color: #222; }
+.dashboard-configs-grid { display: flex; gap: 16px; flex-wrap: wrap; }
+.dashboard-config-btn { background: #fafbfc; border-radius: 8px; padding: 10px 22px; color: #222; text-decoration: none; font-weight: 600; border: 2px solid #eee; transition: border 0.2s, background 0.2s; }
+.dashboard-config-btn:hover { border: 2px solid #ff6b35; background: #fff3ed; }
+@media (max-width: 900px) {
+  .dashboard-main-card { padding: 0 2vw; }
+  .dashboard-welcome { flex-direction: column; gap: 12px; padding: 18px 10px 12px 10px; }
+  .dashboard-cards { flex-direction: column; gap: 12px; }
+  .dashboard-areas, .dashboard-configs { padding: 12px 6px; }
+}
+</style>
+{% endblock %}
